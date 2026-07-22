@@ -37,7 +37,6 @@ export function BinaryCityScroll({ className }: { className?: string }) {
     let scroll = 0;
     let last = performance.now();
 
-    const GROUND_THICK = 8;
     const NEAR_SLOT = 6;
     const FAR_SLOT = 9;
     const FAR_RATIO = 0.45;
@@ -55,14 +54,29 @@ export function BinaryCityScroll({ className }: { className?: string }) {
     let groundTop = 0;
     let dpr = 1;
     let CELL = 9;
+    let GROUND_THICK = 8;
 
     function resize() {
       if (!canvas || !ctx) return;
       const rect = canvas.getBoundingClientRect();
       dpr = window.devicePixelRatio || 1;
-      // Smaller cells on tight/short containers (mobile) so buildings and
-      // trees get enough rows to read as shapes instead of a dense blur.
-      CELL = rect.height < 140 ? 5 : rect.height < 220 ? 6 : 9;
+      // The shorter the container, the more aggressively cells shrink —
+      // a tall CELL on a short mobile strip leaves too few rows for any
+      // building height to read, so short containers need much smaller
+      // cells, not just slightly smaller ones.
+      CELL =
+        rect.height < 70
+          ? 2
+          : rect.height < 100
+            ? 3
+            : rect.height < 140
+              ? 4
+              : rect.height < 220
+                ? 6
+                : 9;
+      // Ground band is thinner on mobile — fewer rows of solid "1"s at
+      // the bottom, leaving more headroom for buildings/trees to read.
+      GROUND_THICK = rect.width < 768 ? 3 : 8;
       canvas.width = Math.floor(rect.width * dpr);
       canvas.height = Math.floor(rect.height * dpr);
       cols = Math.ceil(rect.width / CELL) + 2;

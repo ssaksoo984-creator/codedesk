@@ -49,8 +49,7 @@ export function SphereGallery() {
   const logoInkRef = useRef<HTMLDivElement | null>(null);
   const logoPaperRef = useRef<HTMLDivElement | null>(null);
   const blackoutRef = useRef<HTMLDivElement | null>(null);
-  const serviceCopyRef = useRef<HTMLDivElement | null>(null);
-  const serviceCardsRef = useRef<HTMLDivElement | null>(null);
+  const serviceStageRef = useRef<HTMLDivElement | null>(null);
   const [slideIndex, setSlideIndex] = useState(0);
   const layoutsRef = useRef<CardLayout[]>([]);
 
@@ -60,7 +59,7 @@ export function SphereGallery() {
 
   useEffect(() => {
     const isMobile = window.innerWidth < 768;
-    const radius = isMobile ? 152 : 360;
+    const radius = isMobile ? 137 : 360;
     const count = ABOUT_IMAGES.length;
 
     layoutsRef.current = ABOUT_IMAGES.map((_, i) => {
@@ -101,16 +100,6 @@ export function SphereGallery() {
     const relocateX = leftEdge - vw / 2 + logoHalfW;
     const relocateY = topEdge - vh / 2 + logoHalfH;
 
-    if (serviceCopyRef.current) {
-      serviceCopyRef.current.style.left = `${leftEdge}px`;
-      serviceCopyRef.current.style.top = `${topEdge + (isMobile ? 56 : 70)}px`;
-    }
-    if (serviceCardsRef.current) {
-      serviceCardsRef.current.style.left = `${leftEdge}px`;
-      serviceCardsRef.current.style.right = `${leftEdge}px`;
-      serviceCardsRef.current.style.top = `${topEdge + (isMobile ? 220 : 280)}px`;
-    }
-
     let currentIndex = -1;
 
     const trigger = ScrollTrigger.create({
@@ -145,10 +134,9 @@ export function SphereGallery() {
           if (descRef.current) descRef.current.style.opacity = "1";
           if (finaleStageRef.current) finaleStageRef.current.style.opacity = "0";
           if (blackoutRef.current) blackoutRef.current.style.opacity = "0";
-          if (serviceCopyRef.current) serviceCopyRef.current.style.opacity = "0";
-          if (serviceCardsRef.current) {
-            serviceCardsRef.current.style.opacity = "0";
-            serviceCardsRef.current.style.pointerEvents = "none";
+          if (serviceStageRef.current) {
+            serviceStageRef.current.style.opacity = "0";
+            serviceStageRef.current.style.pointerEvents = "none";
           }
 
           const focusIndex = Math.floor(p2 * count);
@@ -199,10 +187,9 @@ export function SphereGallery() {
             blackoutRef.current.style.background =
               "radial-gradient(circle at center, transparent 75%, #0d0d0d 140%)";
           }
-          if (serviceCopyRef.current) serviceCopyRef.current.style.opacity = "0";
-          if (serviceCardsRef.current) {
-            serviceCardsRef.current.style.opacity = "0";
-            serviceCardsRef.current.style.pointerEvents = "none";
+          if (serviceStageRef.current) {
+            serviceStageRef.current.style.opacity = "0";
+            serviceStageRef.current.style.pointerEvents = "none";
           }
         } else {
           // Cards stay fully collapsed and hidden from here on.
@@ -232,13 +219,14 @@ export function SphereGallery() {
             if (finaleLogoRef.current) {
               finaleLogoRef.current.style.transform = "translate3d(0, 0, 0) scale(1)";
             }
-            if (serviceCopyRef.current) serviceCopyRef.current.style.opacity = "0";
-            if (serviceCardsRef.current) {
-              serviceCardsRef.current.style.opacity = "0";
-              serviceCardsRef.current.style.pointerEvents = "none";
+            if (serviceStageRef.current) {
+              serviceStageRef.current.style.opacity = "0";
+              serviceStageRef.current.style.pointerEvents = "none";
             }
           } else if (p <= RELOCATE_END) {
-            // ---- Phase D: logo shrinks and slides to the top-left, settles ----
+            // ---- Phase D: logo shrinks, slides toward the top-left, and
+            // fades out along the way instead of settling there — it just
+            // disappears mid-move. ----
             const p4 = (p - BLACKOUT_END) / (RELOCATE_END - BLACKOUT_END);
             const ease = smoothstep(p4);
 
@@ -247,11 +235,10 @@ export function SphereGallery() {
               blackoutRef.current.style.background = "#0d0d0d";
             }
             if (logoInkRef.current) logoInkRef.current.style.opacity = "0";
-            if (logoPaperRef.current) logoPaperRef.current.style.opacity = "1";
-            if (serviceCopyRef.current) serviceCopyRef.current.style.opacity = "0";
-            if (serviceCardsRef.current) {
-              serviceCardsRef.current.style.opacity = "0";
-              serviceCardsRef.current.style.pointerEvents = "none";
+            if (logoPaperRef.current) logoPaperRef.current.style.opacity = `${1 - ease}`;
+            if (serviceStageRef.current) {
+              serviceStageRef.current.style.opacity = "0";
+              serviceStageRef.current.style.pointerEvents = "none";
             }
             if (finaleLogoRef.current) {
               const scale = 1 - ease * (1 - FINAL_LOGO_SCALE);
@@ -260,25 +247,19 @@ export function SphereGallery() {
               }px, ${relocateY * ease}px, 0) scale(${scale})`;
             }
           } else {
-            // ---- Phase E: Service title/description/cards fade in below the logo ----
+            // ---- Phase E: logo is gone — the Service header (logo + title,
+            // same layout as Work/Contact) fades in at the same anchor spot ----
             const p5 = (p - RELOCATE_END) / (SERVICE_END - RELOCATE_END);
+            const reveal = smoothstep(p5);
 
             if (blackoutRef.current) {
               blackoutRef.current.style.opacity = "1";
               blackoutRef.current.style.background = "#0d0d0d";
             }
-            if (logoPaperRef.current) logoPaperRef.current.style.opacity = "1";
-            if (finaleLogoRef.current) {
-              finaleLogoRef.current.style.transform = `translate3d(${relocateX}px, ${relocateY}px, 0) scale(${FINAL_LOGO_SCALE})`;
-            }
-            if (serviceCopyRef.current) {
-              serviceCopyRef.current.style.opacity = `${smoothstep(p5 / 0.5)}`;
-            }
-            if (serviceCardsRef.current) {
-              serviceCardsRef.current.style.opacity = `${smoothstep(
-                Math.max(0, (p5 - 0.35) / 0.65)
-              )}`;
-              serviceCardsRef.current.style.pointerEvents = p5 > 0.5 ? "auto" : "none";
+            if (logoPaperRef.current) logoPaperRef.current.style.opacity = "0";
+            if (serviceStageRef.current) {
+              serviceStageRef.current.style.opacity = `${reveal}`;
+              serviceStageRef.current.style.pointerEvents = p5 > 0.5 ? "auto" : "none";
             }
           }
         }
@@ -352,7 +333,7 @@ export function SphereGallery() {
                   ref={(el) => {
                     cardRefs.current[i] = el;
                   }}
-                  className="absolute -left-[56px] -top-[76px] h-[152px] w-[112px] rounded-xl border-2 border-white bg-white p-1 shadow-[0_18px_36px_rgba(13,13,13,0.12)] md:-left-[70px] md:-top-[95px] md:h-[190px] md:w-[140px]"
+                  className="absolute -left-[51px] -top-[69px] h-[137px] w-[101px] rounded-xl border-2 border-white bg-white p-1 shadow-[0_18px_36px_rgba(13,13,13,0.12)] md:-left-[70px] md:-top-[95px] md:h-[190px] md:w-[140px]"
                   style={{ transformStyle: "preserve-3d", willChange: "transform" }}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -379,7 +360,8 @@ export function SphereGallery() {
         />
 
         {/* Finale logo: fades in centered (ink), inverts to paper, then
-            relocates + shrinks into the top-left corner and stays there. */}
+            shrinks + slides toward the top-left while fading out — it just
+            disappears mid-move rather than settling there. */}
         <div
           ref={finaleStageRef}
           className="pointer-events-none absolute inset-0 z-40 flex items-center justify-center opacity-0"
@@ -393,19 +375,20 @@ export function SphereGallery() {
             </div>
           </div>
 
+          {/* Once the logo above has vanished, the Service header fades in
+              here — same logo + title layout as the Work/Contact headers,
+              anchored at the same top-left spot. */}
           <div
-            ref={serviceCopyRef}
-            className="absolute w-[min(80vw,420px)] text-left opacity-0"
+            ref={serviceStageRef}
+            className="wrap absolute inset-0 flex flex-col pb-16 pt-[88px] opacity-0 md:pb-20 md:pt-[112px]"
           >
-            <p className="mb-4 font-display text-4xl italic text-paper md:text-6xl">
+            <Logo tone="paper" size="small" className="mb-8 md:mb-10" />
+            <p className="mb-6 font-display text-4xl italic text-paper md:mb-8 md:text-6xl">
               {SERVICE_INTRO.title}
             </p>
-            <p className="max-w-md text-sm leading-relaxed text-white/55 md:text-base">
+            <p className="mb-10 max-w-md text-sm leading-relaxed text-white/55 md:mb-14 md:text-base">
               {SERVICE_INTRO.description}
             </p>
-          </div>
-
-          <div ref={serviceCardsRef} className="absolute opacity-0">
             <ServiceScroller />
           </div>
         </div>

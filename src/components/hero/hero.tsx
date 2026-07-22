@@ -14,10 +14,10 @@ export function Hero() {
           </div>
 
           <div className="flex h-full flex-col gap-4 md:gap-6">
-            <div className="h-full shrink-0 md:h-[55%]">
+            <div className="h-1/2 shrink-0 md:h-[55%]">
               <RollingCode />
             </div>
-            <div className="hidden min-h-0 flex-1 md:block">
+            <div className="min-h-0 flex-1">
               <BinaryCityScroll />
             </div>
           </div>

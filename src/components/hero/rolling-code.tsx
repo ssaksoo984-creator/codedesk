@@ -13,7 +13,7 @@ export function RollingCode() {
         aria-hidden
       />
 
-      <div className="roll-up-track px-5 py-6 font-mono text-[13px] leading-[1.6] md:px-7 md:text-sm">
+      <div className="roll-up-track px-2.5 py-4 font-mono text-[9px] leading-[1.6] md:px-7 md:py-6 md:text-sm">
         {[0, 1].map((copy) => (
           <div key={copy} aria-hidden={copy === 1}>
             {HERO_CODE_LINES.map((line, i) => (

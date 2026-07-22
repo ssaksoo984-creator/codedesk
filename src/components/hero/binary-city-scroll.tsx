@@ -37,7 +37,6 @@ export function BinaryCityScroll({ className }: { className?: string }) {
     let scroll = 0;
     let last = performance.now();
 
-    const CELL = 9;
     const GROUND_THICK = 8;
     const NEAR_SLOT = 6;
     const FAR_SLOT = 9;
@@ -55,11 +54,15 @@ export function BinaryCityScroll({ className }: { className?: string }) {
     let rows = 0;
     let groundTop = 0;
     let dpr = 1;
+    let CELL = 9;
 
     function resize() {
       if (!canvas || !ctx) return;
       const rect = canvas.getBoundingClientRect();
       dpr = window.devicePixelRatio || 1;
+      // Smaller cells on tight/short containers (mobile) so buildings and
+      // trees get enough rows to read as shapes instead of a dense blur.
+      CELL = rect.height < 140 ? 5 : rect.height < 220 ? 6 : 9;
       canvas.width = Math.floor(rect.width * dpr);
       canvas.height = Math.floor(rect.height * dpr);
       cols = Math.ceil(rect.width / CELL) + 2;
@@ -82,7 +85,9 @@ export function BinaryCityScroll({ className }: { className?: string }) {
 
       if (kind < 0.62) {
         const bw = 3 + (hash(slot * 9 + 2) % 3);
-        const bh = 4 + (hash(slot * 9 + 3) % 10);
+        // Capped to the available sky headroom so buildings always render
+        // whole (base to roof) — any shortfall shrinks the ground instead.
+        const bh = Math.min(4 + (hash(slot * 9 + 3) % 10), Math.max(2, groundTop));
         const lo = 1 + (hash(slot * 9 + 4) % Math.max(1, NEAR_SLOT - bw - 1));
         if (local >= lo && local < lo + bw) {
           const topRow = groundTop - bh;
@@ -98,7 +103,7 @@ export function BinaryCityScroll({ className }: { className?: string }) {
       }
 
       if (kind < 0.94) {
-        const th = 2 + (hash(slot * 9 + 5) % 3);
+        const th = Math.min(2 + (hash(slot * 9 + 5) % 3), Math.max(1, groundTop - 3));
         const cx = 2 + (hash(slot * 9 + 6) % Math.max(1, NEAR_SLOT - 4));
         const trunkTop = groundTop - th;
         if (local === cx && y >= trunkTop && y < groundTop) return 1;
@@ -118,7 +123,7 @@ export function BinaryCityScroll({ className }: { className?: string }) {
       const local = wx - slot * FAR_SLOT;
       if (rnd(slot * 5 + 77) < 0.85) {
         const bw = 4 + (hash(slot * 11 + 2) % 5);
-        const bh = 3 + (hash(slot * 11 + 3) % 8);
+        const bh = Math.min(3 + (hash(slot * 11 + 3) % 8), Math.max(2, groundTop));
         const lo = 1 + (hash(slot * 11 + 4) % Math.max(1, FAR_SLOT - bw - 1));
         if (local >= lo && local < lo + bw) {
           const topRow = groundTop - bh;

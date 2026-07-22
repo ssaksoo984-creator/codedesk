@@ -60,7 +60,7 @@ export function SphereGallery() {
 
   useEffect(() => {
     const isMobile = window.innerWidth < 768;
-    const radius = isMobile ? 190 : 360;
+    const radius = isMobile ? 152 : 360;
     const count = ABOUT_IMAGES.length;
 
     layoutsRef.current = ABOUT_IMAGES.map((_, i) => {
@@ -352,7 +352,7 @@ export function SphereGallery() {
                   ref={(el) => {
                     cardRefs.current[i] = el;
                   }}
-                  className="absolute -left-[70px] -top-[95px] h-[190px] w-[140px] rounded-xl border-2 border-white bg-white p-1 shadow-[0_18px_36px_rgba(13,13,13,0.12)]"
+                  className="absolute -left-[56px] -top-[76px] h-[152px] w-[112px] rounded-xl border-2 border-white bg-white p-1 shadow-[0_18px_36px_rgba(13,13,13,0.12)] md:-left-[70px] md:-top-[95px] md:h-[190px] md:w-[140px]"
                   style={{ transformStyle: "preserve-3d", willChange: "transform" }}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}

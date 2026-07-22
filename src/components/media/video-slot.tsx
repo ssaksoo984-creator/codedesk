@@ -52,10 +52,8 @@ export function VideoSlot({ basename, label, className, grayscale = true }: Vide
       muted
       playsInline
       preload="metadata"
-      poster={`/media/${basename}-poster.jpg`}
       onError={() => setFailed(true)}
     >
-      <source src={`/media/${basename}.webm`} type="video/webm" />
       <source src={`/media/${basename}.mp4`} type="video/mp4" />
     </video>
   );

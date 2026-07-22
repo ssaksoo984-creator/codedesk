@@ -1,10 +1,12 @@
 # media
 
-손 타이핑 영상을 여기에 추가하면 헤더에 자동으로 재생됩니다.
+`VideoSlot` 컴포넌트(`src/components/media/video-slot.tsx`)가 여기 있는 `.mp4` 파일을
+찾아서 자동으로 재생합니다. 파일이 없으면 회색 플레이스홀더 박스가 대신 표시됩니다.
 
-- `typing-hands.mp4` (필수)
-- `typing-hands.webm` (선택, 더 가벼운 코덱)
-- `typing-hands-poster.jpg` (선택, 영상 로드 전 표시될 썸네일)
+현재 사용 중:
 
-파일이 없으면 `src/components/hero/typing-video-slot.tsx`에 정의된
-플레이스홀더 박스가 대신 표시됩니다.
+- `typing-hands.mp4` — Hero 섹션 왼쪽 영상
+- `walking-crowd.mp4` — Contact 섹션 영상
+
+`.webm`이나 포스터 이미지는 코드에서 참조하지 않습니다(브라우저에 따라 없는 소스가
+video 태그 전체를 에러 처리할 수 있어서 뺐어요). 필요해지면 다시 넣어달라고 하시면 됩니다.
